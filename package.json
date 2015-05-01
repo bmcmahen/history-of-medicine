@@ -1,22 +1,13 @@
 {
-  "name": "react-isomorphic-starterkit",
-  "description": "Isomorphic starterkit with server-side React rendering.",
-  "version": "2.3.0",
-  "license": "BSD-3",
+  "name": "history-of-medicine",
+  "description": "History of medicine project for McMaster",
+  "version": "1.0.0",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/RickWong/react-isomorphic-starterkit.git"
+    "url": "https://github.com/bmcmahen/history-of-medicine.git"
   },
-  "homepage": "https://github.com/RickWong/react-isomorphic-starterkit",
-  "keywords": [
-    "react",
-    "isomorphic",
-    "starter",
-    "boilerplate",
-    "template",
-    "webpack",
-    "hapi"
-  ],
+  "homepage": "https://github.com/bmcmahen/history-of-medicine",
   "main": "babel.server.js",
   "scripts": {
     "start": "NODE_PATH=\"./src\" node ./babel.server",
@@ -50,8 +41,6 @@
     "react": "0.13.1",
     "react-inline-css": "1.1.1",
     "react-router": "0.13.2",
-    "react-transmit": "2.5.4",
-    "rethinkdbdash": "^2.0.9",
     "whatwg-fetch": "^0.7.0",
     "yieldb": "git://github.com/bmcmahen/yieldb"
   },
