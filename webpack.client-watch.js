@@ -15,7 +15,6 @@ config.output.hotUpdateMainFilename = "update/[hash]/update.json";
 config.output.hotUpdateChunkFilename = "update/[hash]/[id].update.js";
 
 config.plugins = [
-	new webpack.IgnorePlugin(/server-api/),
 	new webpack.DefinePlugin({__CLIENT__: true, __SERVER__: false}),
 	new webpack.HotModuleReplacementPlugin(),
 	new webpack.NoErrorsPlugin()
@@ -23,6 +22,7 @@ config.plugins = [
 
 config.module = {
 	loaders: [
+		{include: /\.css$/, loader: "style-loader!css-loader" },
 		{include: /\.json$/, loaders: ["json-loader"]},
 		{include: /\.js$/, loaders: ["react-hot", "babel-loader?stage=1&optional=runtime"], exclude: /node_modules/}
 	]

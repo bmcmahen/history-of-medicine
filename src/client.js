@@ -6,6 +6,10 @@ import DatabaseFlux from './state/flux';
 import API from './methods/client';
 import debug from 'debug';
 
+import css from './styles/app.css';
+
+console.log(css);
+
 // Expose debugger on client
 window._bugger = debug;
 
