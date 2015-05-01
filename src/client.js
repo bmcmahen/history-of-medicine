@@ -16,34 +16,34 @@ window._bugger = debug;
 const flux = new DatabaseFlux(API);
 
 if (window.__reactTransmitPacket) {
-	flux.preload(window.__reactTransmitPacket);
+  flux.preload(window.__reactTransmitPacket);
 }
 
 Router.run(routes, Router.HistoryLocation, (Handler, state) => {
 
-	function fetchDocs(routes, ...args) {
-		return Promise.all(routes
-			.filter(route => route.handler.fetchData)
-			.map(route => {
-				return route.handler.fetchData(...args);
-			})
-		);
-	}
+  function fetchDocs(routes, ...args) {
+    return Promise.all(routes
+      .filter(route => route.handler.fetchData)
+      .map(route => {
+        return route.handler.fetchData(...args);
+      })
+    );
+  }
 
-	fetchDocs(state.routes, state.params, flux)
-		.then(() => {
-			React.render(<Handler flux={flux} />, window.document.getElementById('react-root'));
-		});
+  fetchDocs(state.routes, state.params, flux)
+    .then(() => {
+      React.render(<Handler flux={flux} />, window.document.getElementById('react-root'));
+    });
 });
 
 /**
  * Detect whether the server-side render has been discarded due to an invalid checksum.
  */
 if (process.env.NODE_ENV !== "production") {
-	const reactRoot = window.document.getElementById("react-root");
+  const reactRoot = window.document.getElementById("react-root");
 
-	if (!reactRoot || !reactRoot.firstChild || !reactRoot.firstChild.attributes ||
-	    !reactRoot.firstChild.attributes["data-react-checksum"]) {
-		console.error("Server-side React render was discarded. Make sure that your initial render does not contain any client-side code.");
-	}
+  if (!reactRoot || !reactRoot.firstChild || !reactRoot.firstChild.attributes ||
+      !reactRoot.firstChild.attributes["data-react-checksum"]) {
+    console.error("Server-side React render was discarded. Make sure that your initial render does not contain any client-side code.");
+  }
 }

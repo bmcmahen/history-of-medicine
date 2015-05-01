@@ -26,136 +26,136 @@ import PromiseMethods from './plugins/promise-methods';
 const server = new Server(config('/server'));
 
 server.connection({
-	host: config('/http/host'),
-	port: config('/http/port')
+  host: config('/http/host'),
+  port: config('/http/port')
 });
 
 server.register([
-	{ register: PromiseMethods },
-	{
-		register: Mongo,
-		options: config('/mongo')
-	},
-	{ register: Basic },
-	{ register: AuthCookie },
-	{
-		register: Good,
-		options: {
-			opsInterval: 15000,
-			reporters: [{
-				reporter: GoodConsole,
-				events: { log: '*', response: '*', error: '*', info: '*' }
-			}]
-		}
-	}
+  { register: PromiseMethods },
+  {
+    register: Mongo,
+    options: config('/mongo')
+  },
+  { register: Basic },
+  { register: AuthCookie },
+  {
+    register: Good,
+    options: {
+      opsInterval: 15000,
+      reporters: [{
+        reporter: GoodConsole,
+        events: { log: '*', response: '*', error: '*', info: '*' }
+      }]
+    }
+  }
 ], (err) => {
-	if (err) throw err;
+  if (err) throw err;
 
-		// create a session cache from our catbox redis policy
-	const cache = server.cache({
-		expiresIn: 14 * 24 * 60 * 60 * 1000, // 2 weeks
-		segment: 'sessions'
-	});
+    // create a session cache from our catbox redis policy
+  const cache = server.cache({
+    expiresIn: 14 * 24 * 60 * 60 * 1000, // 2 weeks
+    segment: 'sessions'
+  });
 
-	server.auth.strategy('session', 'cookie', {
-		password: config('/cookie/password'),
-		ttl: ms.months(5),
-		cookie: config('/cookie/cookie'),
-		isSecure: config('/cookie/isSecure'),
-		validateFunc: function(session, fn){
-			cache.get(session.sid, function(err, item, cached){
-				if (err) return fn(err, false);
-				if (!cached) return fn(null, false);
-				return fn(null, true, item);
-			});
-		}
-	});
+  server.auth.strategy('session', 'cookie', {
+    password: config('/cookie/password'),
+    ttl: ms.months(5),
+    cookie: config('/cookie/cookie'),
+    isSecure: config('/cookie/isSecure'),
+    validateFunc: function(session, fn){
+      cache.get(session.sid, function(err, item, cached){
+        if (err) return fn(err, false);
+        if (!cached) return fn(null, false);
+        return fn(null, true, item);
+      });
+    }
+  });
 
-	// ensure that, as a default, all requests
-	// require an authenticated user
-	server.auth.default('session');
+  // ensure that, as a default, all requests
+  // require an authenticated user
+  server.auth.default('session');
 
-	// add our server methods, binding our
-	// database client to that method
-	for (let method of Methods) {
-		method.options = method.options || {};
-		method.options.bind = server.plugins.db.mongo;
-		server.plugins.fns.add(method);
-	}
+  // add our server methods, binding our
+  // database client to that method
+  for (let method of Methods) {
+    method.options = method.options || {};
+    method.options.bind = server.plugins.db.mongo;
+    server.plugins.fns.add(method);
+  }
 
-	/**
-	 * Attempt to serve static requests from the public folder.
-	 */
+  /**
+   * Attempt to serve static requests from the public folder.
+   */
 
-	server.route({
-		method:  "*",
-		path:    "/{params*}",
-		config: {
-			auth: {
-				strategy: 'session',
-				mode: 'try'
-			}
-		},
-		handler: (request, reply) => {
-			reply.file("static" + request.path);
-		}
-	});
+  server.route({
+    method:  "*",
+    path:    "/{params*}",
+    config: {
+      auth: {
+        strategy: 'session',
+        mode: 'try'
+      }
+    },
+    handler: (request, reply) => {
+      reply.file("static" + request.path);
+    }
+  });
 
-	server.route(ApiRoutes);
+  server.route(ApiRoutes);
 
-	/**
-	 * Catch dynamic requests here to fire-up React Router.
-	 */
+  /**
+   * Catch dynamic requests here to fire-up React Router.
+   */
 
-	server.ext("onPreResponse", (request, reply) => {
-		if (typeof request.response.statusCode !== "undefined") {
-			return reply.continue();
-		}
+  server.ext("onPreResponse", (request, reply) => {
+    if (typeof request.response.statusCode !== "undefined") {
+      return reply.continue();
+    }
 
-		function fetchDocs(routes, ...args) {
-			return Promise.all(routes
-				.filter(route => route.handler.fetchData)
-				.map(route => {
-					return route.handler.fetchData(...args);
-				})
-			);
-		}
+    function fetchDocs(routes, ...args) {
+      return Promise.all(routes
+        .filter(route => route.handler.fetchData)
+        .map(route => {
+          return route.handler.fetchData(...args);
+        })
+      );
+    }
 
 
-		Router.run(routes, request.path, (Handler, state) => {
+    Router.run(routes, request.path, (Handler, state) => {
 
-			let api = server.plugins.fns;
-			let flux = new Flux(api);
+      let api = server.plugins.fns;
+      let flux = new Flux(api);
 
-			fetchDocs(state.routes, state.params, flux)
-				.then(() => {
-					let reactString = React.renderToString(<Handler flux={flux} />);
-					let output = (
-						`<!doctype html>
-						<html lang="en-us">
-							<head>
-								<meta charset="utf-8">
-								<title>react-isomorphic-starterkit</title>
-								<link rel="shortcut icon" href="/favicon.ico">
-							</head>
-							<body>
-								<div id="react-root">${reactString}</div>
-							</body>
-						</html>`
-					);
+      fetchDocs(state.routes, state.params, flux)
+        .then(() => {
+          let reactString = React.renderToString(<Handler flux={flux} />);
+          let output = (
+            `<!doctype html>
+            <html lang="en-us">
+              <head>
+                <meta charset="utf-8">
+                <title>react-isomorphic-starterkit</title>
+                <link rel="shortcut icon" href="/favicon.ico">
+              </head>
+              <body>
+                <div id="react-root">${reactString}</div>
+              </body>
+            </html>`
+          );
 
-					let host = process.env.NODE_ENV === 'production' ? null : '//localhost:8080';
-					output = injectScript(output, flux.toJSON(), [`${host}/dist/client.js`]);
-					reply(output);
+          let host = process.env.NODE_ENV === 'production' ? null : '//localhost:8080';
+          output = injectScript(output, flux.toJSON(), [`${host}/dist/client.js`]);
+          reply(output);
 
-				})
-				.catch(err =>{
-					reply(err.stack).code(500);
-				});
+        })
+        .catch(err =>{
+          reply(err.stack).code(500);
+        });
 
-		});
-	});
+    });
+  });
 
-	server.start();
+  server.start();
 
 });
