@@ -11,6 +11,7 @@
   "main": "babel.server.js",
   "scripts": {
     "start": "NODE_PATH=\"./src\" node ./babel.server",
+    "test": "jest",
     "localhost": "sleep 1; which open && open http://localhost:8000",
     "browser": "sleep 2; concurrent 'npm run start' 'npm run localhost'",
     "build": "webpack --verbose --colors --display-error-details --config webpack.client.js",
@@ -47,6 +48,8 @@
   "devDependencies": {
     "babel-core": "5.1.6",
     "babel-loader": "5.0.0",
+    "babel-jest": "*",
+    "jest-cli": "*",
     "babel-runtime": "5.1.6",
     "concurrently": "0.0.5",
     "css-loader": "^0.12.0",
@@ -59,5 +62,11 @@
   },
   "engines": {
     "node": ">=0.10.32"
+  },
+  "jest": {
+    "scriptPreprocessor": "./node_modules/babel-jest",
+    "testFileExtensions": ["es6", "js"],
+    "unmockedModulePathPatterns": ["react"],
+    "moduleFileExtensions": ["js", "json", "es6"]
   }
 }

@@ -10,6 +10,7 @@ class DatabaseFlux extends Flux {
 
   constructor(api){
     super();
+    if (!api) throw new Error('API required');
     this.api = api;
     this.createActions('users', UserActions, this, api);
     this.createStore('users', UserStore, this);
