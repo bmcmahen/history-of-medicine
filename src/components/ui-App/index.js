@@ -1,7 +1,8 @@
 'use strict';
 
-import React from 'react';
+import React, {Component} from 'react';
 import FluxComponent from 'flummox/component';
+import {RouteHandler} from 'react-router';
 
 if (__CLIENT__) {
   require('./index.css');
@@ -12,7 +13,11 @@ if (__CLIENT__) {
  * and cient envs.
  */
 
-class Main extends React.Component {
+class Main extends Component {
+
+  constructor(props){
+    super(props);
+  }
 
   static async fetchData(params, flux) {
     const actions = flux.getActions('users');
@@ -22,13 +27,15 @@ class Main extends React.Component {
   render () {
     return (
       <FluxComponent flux={this.props.flux} connectToStores={['users']}>
-        <div className='App'>
-          <h1>bacon!</h1>
-        </div>
+        <RouteHandler />
       </FluxComponent>
     );
   }
 
 }
+
+Main.propTypes = {
+
+};
 
 export default Main;

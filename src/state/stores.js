@@ -1,24 +1,43 @@
-import { Store } from 'flummox';
-import Debug from 'debug';
+'use strict';
 
-const debug = Debug('app:state:stores');
+import { Store } from 'flummox';
+import debug from 'debug';
+
+const log = debug('app:state:stores');
 
 class UserStore extends Store {
 
-  constructor(flux) {
+  constructor(flux){
     super();
     const userActions = flux.getActions('users');
     this.register(userActions.getUser, this.handleGetUser);
+    this.register(userActions.login, this.handleLogin);
     this.state = {
-      user: {}
+      user: {},
+      loggedIn: false
     };
   }
 
   handleGetUser(user){
-    debug('got user %o', user);
+    log('got user %o', user);
     this.setState({
-      user: user
+      user: user,
+      loggedIn: true
     });
+  }
+
+  handleLogin(err, user){
+    if (err) {
+      this.setState({
+        user: {},
+        loggedIn: false
+      });
+    } else {
+      this.setState({
+        user: user,
+        loggedIn: true
+      });
+    }
   }
 
 }

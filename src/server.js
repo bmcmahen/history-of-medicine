@@ -17,6 +17,7 @@ import GoodConsole from 'good-console';
 import ApiRoutes from './api';
 import Mongo from './plugins/mongo';
 import Methods from './methods/server';
+import Boom from 'boom';
 import PromiseMethods from './plugins/promise-methods';
 
 
@@ -122,7 +123,22 @@ server.register([
     }
 
 
-    Router.run(routes, request.path, (Handler, state) => {
+
+    const router = Router.create({
+      routes: routes,
+      location: request.path,
+      onAbort: onAbort
+    });
+
+    function onAbort(reason) {
+      if (reason.constructor.name === 'Redirect'){
+        const route = router.makePath(reason.to, reason.params, reason.query);
+        return reply.redirect(route);
+      }
+      return reply(Boom.badImplementation());
+    }
+
+    router.run((Handler, state) => {
 
       let api = server.plugins.fns;
       let flux = new Flux(api);
