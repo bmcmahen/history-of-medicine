@@ -1,4 +1,9 @@
+'use strict';
+
 import { Actions } from 'flummox';
+import debug from 'debug';
+
+const log = debug('app:state:actions');
 
 class UserActions extends Actions {
 
@@ -8,10 +13,14 @@ class UserActions extends Actions {
     this.api = api;
   }
 
-  getUser(name) {
-    const userStore = this.flux.getStore('users');
-    if (userStore.state.user) return;
-    return this.api.getUserById();
+  async getUser() {
+    // const userStore = this.flux.getStore('users');
+
+    try {
+      return await this.api.getUserById();
+    } catch(err) {
+      log('error fetching user %j', err);
+    }
   }
 
 }

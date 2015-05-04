@@ -1,3 +1,5 @@
+/* @flow */
+
 import React from "react";
 import Router from "react-router";
 import Transmit from "react-transmit";
@@ -21,7 +23,7 @@ if (window.__reactTransmitPacket) {
 
 Router.run(routes, Router.HistoryLocation, (Handler, state) => {
 
-  function fetchDocs(routes, ...args) {
+  function fetchDocs(routes: array, ...args) {
     return Promise.all(routes
       .filter(route => route.handler.fetchData)
       .map(route => {

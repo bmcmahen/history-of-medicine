@@ -1,0 +1,5 @@
+[ignore]
+.*/static
+.*/node_modules
+
+[include]
