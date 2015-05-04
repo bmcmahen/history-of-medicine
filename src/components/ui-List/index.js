@@ -1,12 +1,16 @@
 import React from 'react';
 
+if (__CLIENT__) {
+  require('./index.css');
+}
+
 class List extends React.Component {
 
   render(){
 
     return (
       <div>
-        <p>Hello {this.props.user.name}</p>
+        <p>Hello</p>
         <button onClick={this.changeName.bind(this)}>Change Name</button>
       </div>
 

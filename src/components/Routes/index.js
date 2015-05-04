@@ -1,10 +1,6 @@
 import React from "react";
 import {Route, DefaultRoute} from "react-router";
-import Main from "./Main";
-
-if (__CLIENT__) {
-	require('../styles/main.css');
-}
+import Main from "../ui-App";
 
 /**
  * The React Routes for both the server and the client.

@@ -1,4 +1,4 @@
-jest.dontMock('../List.js');
+jest.dontMock('../index.js');
 
 var user = Object.freeze({
   name: 'ben'
@@ -7,7 +7,7 @@ var user = Object.freeze({
 describe('List', () => {
 
   it('render the correct name', () => {
-    var List = require('../List');
+    var List = require('../index');
     var React = require('react/addons');
     var TestUtils = React.addons.TestUtils;
 
