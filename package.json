@@ -40,9 +40,7 @@
     "milliseconds": "^1.0.3",
     "piping": "^0.1.8",
     "react": "0.13.1",
-    "react-inline-css": "1.1.1",
     "react-router": "0.13.2",
-    "react-style": "^0.5.5",
     "whatwg-fetch": "^0.7.0",
     "yieldb": "git://github.com/bmcmahen/yieldb"
   },

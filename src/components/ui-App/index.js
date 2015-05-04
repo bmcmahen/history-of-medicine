@@ -12,23 +12,23 @@ if (__CLIENT__) {
 
 class Main extends React.Component {
 
-	static async fetchData(params, flux) {
-		const actions = flux.getActions('users');
-		return await actions.getUser('ben');
-	}
+  static async fetchData(params, flux) {
+    const actions = flux.getActions('users');
+    return await actions.getUser('ben');
+  }
 
-	/**
-	 * Runs on server and client.
-	 */
-	render () {
-		return (
-			<FluxComponent flux={this.props.flux} connectToStores={['users']}>
-				<div className='App'>
-					<h1>bacon!</h1>
-				</div>
-			</FluxComponent>
-		);
-	}
+  /**
+   * Runs on server and client.
+   */
+  render () {
+    return (
+      <FluxComponent flux={this.props.flux} connectToStores={['users']}>
+        <div className='App'>
+          <h1>bacon!</h1>
+        </div>
+      </FluxComponent>
+    );
+  }
 
 }
 

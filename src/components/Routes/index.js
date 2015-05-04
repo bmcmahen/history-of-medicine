@@ -8,7 +8,7 @@ import Main from "../ui-App";
  * @class Routes
  */
 export default (
-	<Route path="/">
-		<DefaultRoute handler={Main} />
-	</Route>
+  <Route path="/">
+    <DefaultRoute handler={Main} />
+  </Route>
 );
