@@ -19,9 +19,31 @@ module.exports = [
     path: '/auth/logout',
     config: {
       description: 'Destroy the current user session',
+      auth: {
+        strategy: 'session',
+        mode: 'try'
+      },
       handler: function(request, reply) {
         request.auth.session.clear();
-        return reply.code(200);
+        return reply().code(200);
+      }
+    }
+  },
+
+  {
+    method: 'GET',
+    path: '/auth/me',
+    config: {
+      description: 'Get the current session user',
+      auth: {
+        strategy: 'session',
+        mode: 'try'
+      },
+      handler: function(request, reply) {
+        if (request.auth.isAuthenticated) {
+          return reply(request.auth.credentials.user).code(200);
+        }
+        return reply().code(404);
       }
     }
   },
