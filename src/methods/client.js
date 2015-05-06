@@ -1,9 +1,8 @@
 'use strict';
 
 import debug from 'debug';
-
-// typical import doesn't work for this -- huh?
-require('whatwg-fetch');
+import superagent from 'superagent';
+import Promise from 'bluebird';
 
 const log = debug('app:methods:client');
 
@@ -16,19 +15,13 @@ const log = debug('app:methods:client');
  */
 
 function request(method, path, body) {
-  let contents = {
-    method: method,
-    header: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    }
-  };
-
-  if (body) {
-    contents.body = JSON.stringify(body);
-  }
-
-  return fetch(path, contents);
+  return new Promise((resolve, reject) => {
+    let req = superagent[method](path).send(body);
+    req.end((err, res) => {
+      if (err) return reject(err);
+      return resolve(res);
+    });
+  });
 }
 
 /**
@@ -38,24 +31,24 @@ function request(method, path, body) {
 export default {
 
   async getCurrentSession() {
-    let res = await request('get', '/api/user/me');
-    return await res.json();
+    return await request('get', '/api/user/me');
   },
 
   async login(email, password) {
     let body = { email: email, password: password };
-    let res = await request('post', '/auth/login', body);
-    log('login response %o', res);
-    if (res.status === 200) {
-      let json = await res.json();
-      return { status: res.status, body: json };
+
+    try {
+      let res = await request('post', '/auth/login', body);
+      log('login response %o', res);
+      return { status: res.status, body: res.body };
+    } catch(err) {
+      console.error(err);
+      return { status: err.status, text: err.message };
     }
-    return { status: res.status, text: res.statusText };
   },
 
   async logout() {
-    let res = await request('post', '/auth/logout');
-    return { status: res.status };
+    return await request('get', '/auth/logout');
   },
 
   async register(email, password) {

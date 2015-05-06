@@ -2,7 +2,7 @@
 
 import React from 'react';
 import debug from 'debug';
-import {Link} from 'react-router';
+import {Link} from '../Router';
 
 const log = debug('App:components:ui-Login');
 

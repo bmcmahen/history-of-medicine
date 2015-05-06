@@ -6,7 +6,7 @@
 
 import {Server} from 'hapi';
 import React from 'react';
-import Router from 'react-router';
+import Router from './components/Router';
 import routes from './Components/Routes';
 import Promise from 'bluebird';
 import Flux from './State/flux';
@@ -126,6 +126,7 @@ server.register([
     },
     handler: (request, reply) => {
 
+      // if it's a json request, reply not-found
       let type = request.headers['content-type'];
       if (type && type === 'application/json') {
         return reply(Boom.notFound());
@@ -146,6 +147,32 @@ server.register([
         );
       }
 
+      // Create flux context
+      let api = server.plugins.fns;
+      let flux = new Flux(api);
+
+      // preload our session
+      let currentUser = request.auth.credentials &&
+        request.auth.credentials.user;
+
+      let preload = currentUser
+        ? {
+            users: {
+              user: currentUser,
+              loaded: true,
+              loggedIn: true
+            }
+          }
+        : {
+          users: {
+            loaded: true,
+            loggedIn: false
+          }
+        };
+
+      flux.preload(preload);
+
+
       /**
        * Instantiate a new Router
        */
@@ -153,7 +180,8 @@ server.register([
       const router = Router.create({
         routes: routes,
         location: request.path,
-        onAbort: onAbort
+        onAbort: onAbort,
+        transitionContext: flux
       });
 
       /**
@@ -175,30 +203,6 @@ server.register([
        */
 
       router.run((Handler, state) => {
-
-        let api = server.plugins.fns;
-        let flux = new Flux(api);
-
-        // preload our session
-        let currentUser = request.auth.credentials &&
-          request.auth.credentials.user;
-
-        let preload = currentUser
-          ? {
-              users: {
-                user: currentUser,
-                loaded: true,
-                loggedIn: true
-              }
-            }
-          : {
-            users: {
-              loaded: true,
-              loggedIn: false
-            }
-          };
-
-        flux.preload(preload);
 
         // fetch all of the docs
         fetchDocs(state.routes, state.params, flux)

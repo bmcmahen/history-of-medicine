@@ -2,7 +2,7 @@
 
 import React, {Component, PropTypes} from 'react';
 import FluxComponent from 'flummox/component';
-import {RouteHandler} from 'react-router';
+import {RouteHandler} from '../Router';
 
 if (__CLIENT__) {
   require('./index.css');

@@ -1,9 +1,8 @@
-/* @flow */
+'use strict';
 
-import React from "react";
-import Router from "react-router";
-import Transmit from "react-transmit";
-import routes from "./components/Routes";
+import React from 'react';
+import Router from './components/Router';
+import routes from './components/Routes';
 import DatabaseFlux from './state/flux';
 import API from './methods/client';
 import debug from 'debug';
@@ -21,9 +20,16 @@ if (window.__reactTransmitPacket) {
   flux.preload(window.__reactTransmitPacket);
 }
 
-Router.run(routes, Router.HistoryLocation, (Handler, state) => {
+const router = Router.create({
+  routes: routes,
+  location: Router.HistoryLocation,
+  transitionContext: flux
+});
 
-  function fetchDocs(routes: array, ...args) {
+
+router.run((Handler, state) => {
+
+  function fetchDocs(routes, ...args) {
     return Promise.all(routes
       .filter(route => route.handler.fetchData)
       .map(route => {
@@ -41,7 +47,7 @@ Router.run(routes, Router.HistoryLocation, (Handler, state) => {
 /**
  * Detect whether the server-side render has been discarded due to an invalid checksum.
  */
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== 'production') {
   const reactRoot = window.document.getElementById("react-root");
 
   if (!reactRoot || !reactRoot.firstChild || !reactRoot.firstChild.attributes ||

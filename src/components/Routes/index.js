@@ -1,5 +1,5 @@
 import React from 'react';
-import {Route, DefaultRoute} from 'react-router';
+import {Route, DefaultRoute} from '../Router';
 import Main from '../ui-App';
 import List from '../ui-List';
 import Admin from '../ui-Admin';

@@ -3,7 +3,7 @@
 import React from 'react';
 import debug from 'debug';
 
-const log = debug('app:components:require-auth');
+const log = debug('app:components:require-admin');
 
 /**
  * Any Component passed to this will require the the user is
@@ -11,13 +11,15 @@ const log = debug('app:components:require-auth');
  */
 
 const requireAuth = (Component) => {
-  return class Authenticated extends React.Component {
+  return class isAdmin extends React.Component {
 
     static willTransitionTo(transition) {
       let store = transition.context.getStore('users');
       if (!store.state.loggedIn) {
         log('user not logged in, redirecting to login page');
         transition.redirect('/login', {}, { nextPath: transition.path });
+      } else if (store.state.user && !store.state.user.admin) {
+        transition.redirect('/', {}, {});
       }
     }
 

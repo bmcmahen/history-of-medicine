@@ -2,7 +2,7 @@
 
 import React from 'react';
 import debug from 'debug';
-import {Link} from 'react-router';
+import {Link} from '../Router';
 
 const log = debug('app:components:ui-Login');
 
@@ -45,8 +45,10 @@ class Login extends React.Component {
       // attempt the login
       let res = await flux.getActions('users').login(email, pass);
       if (res.status === 200) {
+        log('successful login, redirect to %s', nextPath || '/admin');
         router.replaceWith(nextPath || '/admin');
       } else {
+        log('error logging in');
         this.setState({ error: res.text });
       }
     } catch(err) {
