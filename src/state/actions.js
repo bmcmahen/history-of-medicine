@@ -13,14 +13,22 @@ class UserActions extends Actions {
     this.api = api;
   }
 
-  async getUser() {
-    // const userStore = this.flux.getStore('users');
+  async getCurrentSession() {
+    log('fetching current session');
+    let res = await this.api.getCurrentSession();
+    return await res.json();
+  }
 
-    try {
-      return await this.api.getUserById();
-    } catch(err) {
-      log('error fetching user %j', err);
-    }
+  async login(username, password) {
+    return await this.api.login(username, password);
+  }
+
+  async logout() {
+    return await this.api.logout();
+  }
+
+  async register(email, password){
+    return await this.api.register(email, password);
   }
 
 }

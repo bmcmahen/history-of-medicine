@@ -1,16 +1,19 @@
-import {Server} from "hapi";
-import React from "react";
-import Router from "react-router";
-import Transmit from "react-transmit";
-import routes from "./Components/Routes";
+'use strict';
+
+/**
+ * Module dependencies
+ */
+
+import {Server} from 'hapi';
+import React from 'react';
+import Router from 'react-router';
+import routes from './Components/Routes';
 import Promise from 'bluebird';
 import Flux from './State/flux';
 import injectScript from './util/inject';
 import config from './config';
 import Basic from 'hapi-auth-basic';
-import Bcrypt from 'bcrypt';
 import AuthCookie from 'hapi-auth-cookie';
-import _ from 'lodash';
 import ms from 'milliseconds';
 import Good from 'good';
 import GoodConsole from 'good-console';
@@ -20,10 +23,10 @@ import Methods from './methods/server';
 import Boom from 'boom';
 import PromiseMethods from './plugins/promise-methods';
 
-
 /**
- * Start Hapi server on port 8000.
+ * Create new Hapi Server
  */
+
 const server = new Server(config('/server'));
 
 server.connection({
@@ -49,15 +52,20 @@ server.register([
       }]
     }
   }
-], (err) => {
-  if (err) throw err;
+], (pluginError) => {
+  if (pluginError) throw pluginError;
 
-    // create a session cache from our catbox redis policy
+  // create redis server cache
   const cache = server.cache({
     expiresIn: 14 * 24 * 60 * 60 * 1000, // 2 weeks
     segment: 'sessions'
   });
 
+  server.bind({
+    sessionCache: cache
+  });
+
+  // create standard auth strategy using cookies
   server.auth.strategy('session', 'cookie', {
     password: config('/cookie/password'),
     ttl: ms.months(5),
@@ -84,13 +92,32 @@ server.register([
     server.plugins.fns.add(method);
   }
 
-  /**
-   * Attempt to serve static requests from the public folder.
-   */
+  // add all of our api routes
+  server.route(ApiRoutes);
 
+  // Static files
   server.route({
-    method:  "*",
-    path:    "/{params*}",
+    method: 'get',
+    path: '/assets/{path*}',
+    config: {
+      auth: {
+        strategy: 'session',
+        mode: 'try'
+      }
+    },
+    handler: {
+      directory: {
+        path: './static',
+        listing: true,
+        index: true
+      }
+    }
+  });
+
+  // App Routes
+  server.route({
+    method: 'get',
+    path: '/{params*}',
     config: {
       auth: {
         strategy: 'session',
@@ -98,78 +125,109 @@ server.register([
       }
     },
     handler: (request, reply) => {
-      reply.file("static" + request.path);
-    }
-  });
 
-  server.route(ApiRoutes);
-
-  /**
-   * Catch dynamic requests here to fire-up React Router.
-   */
-
-  server.ext("onPreResponse", (request, reply) => {
-    if (typeof request.response.statusCode !== "undefined") {
-      return reply.continue();
-    }
-
-    function fetchDocs(routes, ...args) {
-      return Promise.all(routes
-        .filter(route => route.handler.fetchData)
-        .map(route => {
-          return route.handler.fetchData(...args);
-        })
-      );
-    }
-
-
-
-    const router = Router.create({
-      routes: routes,
-      location: request.path,
-      onAbort: onAbort
-    });
-
-    function onAbort(reason) {
-      if (reason.constructor.name === 'Redirect'){
-        const route = router.makePath(reason.to, reason.params, reason.query);
-        return reply.redirect(route);
+      let type = request.headers['content-type'];
+      if (type && type === 'application/json') {
+        return reply(Boom.notFound());
       }
-      return reply(Boom.badImplementation());
+
+      /**
+       * Preload docs for routes to be rendered
+       * @param {Array} routes
+       * @param {Arguments} ...args
+       */
+
+      function fetchDocs(routes, ...args) {
+        return Promise.all(routes
+          .filter(route => route.handler.fetchData)
+          .map(route => {
+            return route.handler.fetchData(...args);
+          })
+        );
+      }
+
+      /**
+       * Instantiate a new Router
+       */
+
+      const router = Router.create({
+        routes: routes,
+        location: request.path,
+        onAbort: onAbort
+      });
+
+      /**
+       * If a redirection occurs, render that instead
+       * @param {Object} reason
+       */
+
+      function onAbort(reason) {
+        if (reason.constructor.name === 'Redirect'){
+          const route = router.makePath(reason.to, reason.params, reason.query);
+          return reply.redirect(route);
+        }
+        server.log(reason);
+        return reply(Boom.badImplementation());
+      }
+
+      /**
+       * Run our router, and create a new flux
+       */
+
+      router.run((Handler, state) => {
+
+        let api = server.plugins.fns;
+        let flux = new Flux(api);
+
+        // preload our session
+        let currentUser = request.auth.credentials &&
+          request.auth.credentials.user;
+
+        let preload = currentUser
+          ? {
+              users: {
+                user: currentUser,
+                loaded: true,
+                loggedIn: true
+              }
+            }
+          : {
+            users: {
+              loaded: true,
+              loggedIn: false
+            }
+          };
+
+        flux.preload(preload);
+
+        // fetch all of the docs
+        fetchDocs(state.routes, state.params, flux)
+          .then(() => {
+            let reactString = React.renderToString(<Handler flux={flux} />);
+            let output = (
+              `<!doctype html>
+              <html lang="en-us">
+                <head>
+                  <meta charset="utf-8">
+                  <title>react-isomorphic-starterkit</title>
+                  <link rel="shortcut icon" href="/assets/favicon.ico">
+                </head>
+                <body>
+                  <div id="react-root">${reactString}</div>
+                </body>
+              </html>`
+            );
+
+            let host = process.env.NODE_ENV === 'production' ? null : '//localhost:8080';
+            output = injectScript(output, flux.toJSON(), [`${host}/client.js`]);
+            reply(output);
+
+          })
+          .catch(err => {
+            return reply(Boom.wrap(err));
+          });
+      });
     }
-
-    router.run((Handler, state) => {
-
-      let api = server.plugins.fns;
-      let flux = new Flux(api);
-
-      fetchDocs(state.routes, state.params, flux)
-        .then(() => {
-          let reactString = React.renderToString(<Handler flux={flux} />);
-          let output = (
-            `<!doctype html>
-            <html lang="en-us">
-              <head>
-                <meta charset="utf-8">
-                <title>react-isomorphic-starterkit</title>
-                <link rel="shortcut icon" href="/favicon.ico">
-              </head>
-              <body>
-                <div id="react-root">${reactString}</div>
-              </body>
-            </html>`
-          );
-
-          let host = process.env.NODE_ENV === 'production' ? null : '//localhost:8080';
-          output = injectScript(output, flux.toJSON(), [`${host}/dist/client.js`]);
-          reply(output);
-
-        })
-        .catch(err =>{
-          reply(err.stack).code(500);
-        });
-
-    });
   });
 
   server.start();

@@ -4,7 +4,7 @@ import React from 'react';
 import debug from 'debug';
 import {Link} from 'react-router';
 
-const log = debug('app:components:ui-Login');
+const log = debug('App:components:ui-Login');
 
 if (__CLIENT__) {
   require('./index.css');
@@ -14,7 +14,7 @@ if (__CLIENT__) {
  * Login forms
  */
 
-class Login extends React.Component {
+class Register extends React.Component {
 
   static propTypes = {
     flux: React.PropTypes.object
@@ -29,50 +29,53 @@ class Login extends React.Component {
     this.state = {
       error: false,
       email: '',
-      password: ''
+      pass: ''
     };
   }
 
   async handleSubmit(e) {
     e.preventDefault();
     const { router } = this.context;
-    const { flux } = this.props;
     const nextPath = router.getCurrentQuery().nextPath;
     const {email, pass} = this.state;
-    log('login %s, password %s', email, pass);
+    log('register username %s, password %s', email, pass);
 
     try {
-      // attempt the login
-      let res = await flux.getActions('users').login(email, pass);
+      // attempt registration
+      let res = await this.props.flux.getActions('users').register(email, pass);
       if (res.status === 200) {
         router.replaceWith(nextPath || '/admin');
       } else {
-        this.setState({ error: res.text });
+        this.setState({
+          error: 'Password or username did not match records.'
+        });
       }
     } catch(err) {
-      console.error(err.stack);
-      this.setState({ error: 'An unexpected error occurred' });
+      log('Unexpected error logging in %j', err);
+      this.setState({
+        error: 'An unexpected error occurred.'
+      });
     }
   }
 
-  render(){
+  render() {
     return (
-      <div className='Login'>
-        <h2>Login</h2>
-        <form className='Login' onSubmit={this.handleSubmit.bind(this)}>
+      <div className='Register'>
+        <h2>Register</h2>
+        <form onSubmit={this.handleSubmit.bind(this)}>
           <label>
-            <input type='email' onChange={this.set('email').bind(this)} placeholder='email'/>
+            <input type='email' onChange={this.set('email')} placeholder='email'/>
           </label>
           <label>
-            <input type='password' onChange={this.set('pass').bind(this)} placeholder='password'/>
+            <input type='password' onChange={this.set('pass')} placeholder='password'/>
           </label>
           <button type='submit'>Login</button>
-          {this.state.error && (
-            <p>{this.state.error}</p>
-          )}
           <div>
-            Not <Link to='register'>registered?</Link>
+            Already registered? <Link to='login'>Login</Link>
           </div>
+          {this.state.error && (
+            <p>Bad register information</p>
+          )}
         </form>
       </div>
     );
@@ -81,10 +84,10 @@ class Login extends React.Component {
   set(field) {
     let obj = {};
     return (e) => {
-      obj[field] = e.target.value;
+      obj[field] = e.target.textContent;
       this.setState(obj);
     }
   }
 }
 
-export default Login;
+export default Register;

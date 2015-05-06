@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {Component} from 'react';
+import React, {Component, PropTypes} from 'react';
 import FluxComponent from 'flummox/component';
 import {RouteHandler} from 'react-router';
 
@@ -15,27 +15,35 @@ if (__CLIENT__) {
 
 class Main extends Component {
 
+  displayName = 'Main'
+
+  static propTypes = {
+    flux: PropTypes.object.isRequired
+  }
+
   constructor(props){
     super(props);
   }
 
   static async fetchData(params, flux) {
-    const actions = flux.getActions('users');
-    return await actions.getUser('ben');
+    if (__SERVER__) return;
+    const store = flux.getStore('users');
+    if (store.state.loaded) return;
+    await flux.getActions('users').getCurrentSession();
   }
 
   render () {
     return (
-      <FluxComponent flux={this.props.flux} connectToStores={['users']}>
+      <FluxComponent flux={this.props.flux} connectToStores={{
+        users: store => ({
+          user: store.state
+        })
+      }}>
         <RouteHandler />
       </FluxComponent>
     );
   }
 
 }
-
-Main.propTypes = {
-
-};
 
 export default Main;

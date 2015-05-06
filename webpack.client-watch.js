@@ -10,7 +10,7 @@ config.entry.unshift(
 	"webpack/hot/only-dev-server"
 );
 
-config.output.publicPath = "http://localhost:8080/dist/";
+config.output.publicPath = "http://localhost:8080/";
 config.output.hotUpdateMainFilename = "update/[hash]/update.json";
 config.output.hotUpdateChunkFilename = "update/[hash]/[id].update.js";
 
@@ -29,7 +29,7 @@ config.module = {
 };
 
 config.devServer = {
-	publicPath:  "http://localhost:8080/dist/",
+	publicPath:  "http://localhost:8080/",
 	contentBase: "./static",
 	hot:         true,
 	inline:      true,
