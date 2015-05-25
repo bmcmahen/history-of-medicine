@@ -3,6 +3,7 @@
 import React, {Component, PropTypes} from 'react';
 import {Link} from '../Router';
 import requireAuth from '../RequireAuth';
+import NewDoc from '../ui-NewDoc';
 
 class Admin extends Component {
 
@@ -23,6 +24,7 @@ class Admin extends Component {
       <div className='Admin'>
         Admin section
         <a href='/auth/logout' onClick={this.logout.bind(this)}>Logout</a>
+        <NewDoc {...this.props} />
       </div>
     );
   }

@@ -1,32 +1,32 @@
-'use strict';
+'use strict'
 
-import React from 'react';
-import {Link} from '../Router';
+import React from 'react'
+import {Link} from '../Router'
+import Container from '../ui-Container'
+import Menu from '../ui-Menu'
 
 if (__CLIENT__) {
-  require('./index.css');
+  require('./index.css')
 }
 
 class List extends React.Component {
 
-  render(){
+  displayName = 'List'
+
+  render () {
 
     return (
       <div className='List'>
-        <p>List page</p>
-        <Link to='admin'>Admin Page</Link>
+        <Menu title='Guns and Stuff' />
+        <Container />
       </div>
 
-    );
-  }
-
-  changeName(){
-    this.props.flux.getActions('users').getUser('bento');
+    )
   }
 }
 
 List.propTypes = {
   flux: React.PropTypes.object.isRequired
-};
+}
 
-export default List;
+export default List

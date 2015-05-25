@@ -1,0 +1,109 @@
+.Menu {
+  width: 277px;
+  height: 100%;
+  position: fixed;
+  z-index: 90;
+  background-color: #000;
+  left: 0;
+  top: 0;
+  transition-timing-function: cubic-bezier(0.6,0,0.2,1);
+  transition-property: transform;
+  transform: translate3d(-277px, 0px, 0px);
+  transition-duration: 0.6s;
+}
+
+.Menu.open {
+  transform: translate3d(0px,0px,0px);
+}
+
+.Menu__controls {
+  position: absolute;
+  z-index: 91;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  transition-duration: 0.6s;
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.6,0,0.2,1);
+  transform: translate3d(317px,40px,0px);
+}
+
+.Menu__controls > h2 {
+  opacity: 1;
+  margin: 0;
+  transition-duration: 0.6s;
+  transition-property: opacity;
+  transition-timing-function: cubic-bezier(0.6,0,0.2,1);
+}
+
+.Menu.open .Menu__controls > h2 {
+  opacity: 0;
+}
+
+.Menu__controls > i {
+  width: 50px;
+  height: 40px;
+  cursor: pointer;
+  transition-duration: 0.6s;
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.6,0,0.2,1);
+}
+
+.Menu.open .Menu__controls {
+  transform: translate3d(191px,40px,0px);
+}
+
+.Menu__controls > i > span {
+  display: block;
+  width: 50px;
+  height: 40px;
+  transform: translate3d(0px,0px,0px);
+  transition-property: transform;
+  transition-duration: .4s;
+  transition-timing-function: cubic-bezier(0.17,0.89,0.44,1.52);
+}
+
+.Menu.open .Menu__controls > i > span> p {
+  background-color: rgba(255,255,255,1);
+}
+.Menu.open .Menu__controls > i > span > p:nth-child(1) {
+  transform: translate3d(0px,9px,0px) rotate(-45deg);
+}
+
+.Menu__controls > i > span > p:nth-child(1) {
+  top: 10px;
+  transform: translate3d(0px,0px,0px) rotate(0deg);
+}
+
+.Menu.open .Menu__controls > i > span > p:nth-child(2) {
+  transform: translate3d(0px,0px,0px) scaleX(0);
+}
+
+.Menu__controls > i > span > p:nth-child(2) {
+  top: 19px;
+  transform: translate3d(0px,0px,0px) scaleX(1);
+}
+
+.Menu.open .Menu__controls > i > span > p:nth-child(3) {
+  transform: translate3d(0px,-9px,0px) rotate(45deg);
+}
+
+.Menu__controls > i > span > p:nth-child(3) {
+  top: 28px;
+  transform: translate3d(0px,0px,0px) rotate(0deg);
+}
+
+.Menu__controls > i > span >p {
+  display: block;
+  width: 30px;
+  height: 2px;
+  background-color: rgba(0,0,0,0.9);
+  margin: 0;
+  position: absolute;
+  z-index: 95;
+  left: 10px;
+  transition-property: transform,background-color;
+  transition-duration: .6s;
+  transition-timing-function: cubic-bezier(0.6,0,0.2,1);
+}
