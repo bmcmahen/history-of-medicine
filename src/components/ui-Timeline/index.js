@@ -22,7 +22,10 @@ class AppTimeline extends Component {
 
   static fetchData (params, flux) {
     let appActions = flux.getActions('app')
-    return appActions.setTitle('App Timeline')
+    let appStore = flux.getStore('app')
+    if (appStore.state.title !== 'Timeline') {
+      return appActions.setTitle('Timeline')
+    }
   }
 
   constructor (props) {
@@ -51,7 +54,7 @@ class AppTimeline extends Component {
   }
 
   componentDidMount(){
-
+    this.componentWillReceiveProps(this.props)
   }
 
   renderTimeline () {

@@ -31,10 +31,17 @@
   right: 0;
   transition-duration: 0.6s;
   top: 0;
-  overflow-y: auto;
+  overflow: hidden;
   /*background: #f5f5f5;*/
   transition-property: transform;
   transition-timing-function: cubic-bezier(0.6,0,0.2,1);
+}
+
+.Container__detail-content {
+  overflow-y: auto;
+  position: relative;
+  height: 100%;
+  width: 100%;
 }
 
 .Container__detail-article {

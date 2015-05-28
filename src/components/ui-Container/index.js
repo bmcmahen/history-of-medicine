@@ -38,12 +38,19 @@ class Container extends Component {
   onWindowClick(e){
     // request to close menu when clicking outside of
     // the menu when it is already open
-    if (this.state.isOpen) {
+    if (this.props.isOpen) {
       e.stopPropagation()
       let el = React.findDOMNode(this.refs.detail)
       if (!el.contains(e.target)) {
         this.setState({ isOpen: false })
       }
+    }
+  }
+
+  componentWillReceiveProps(nextProps){
+    if (nextProps.isOpen && !this.props.isOpen) {
+      let el = React.findDOMNode(this.refs.scroll)
+      el.scrollTop = 0
     }
   }
 
@@ -70,7 +77,9 @@ class Container extends Component {
         </section>
         <section ref='detail' className={detail}>
           <CloseButton onClick={this.hideDetail.bind(this)} />
-          {this.props.detail}
+          <div className='Container__detail-content' ref='scroll'>
+            {this.props.detail}
+          </div>
         </section>
       </div>
     )

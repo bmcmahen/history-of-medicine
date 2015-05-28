@@ -213,11 +213,10 @@ server.register([
               <html lang="en-us">
                 <head>
                   <meta charset="utf-8">
-                  <title>react-isomorphic-starterkit</title>
+                  <title>History of Medicine</title>
                   <link rel="shortcut icon" href="/assets/favicon.ico">
-                  <link href='http://fonts.googleapis.com/css?family=Libre+Baskerville:400,700,400italic' rel='stylesheet' type='text/css'>
-                  <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic' rel='stylesheet' type='text/css'>
                   <link href='http://fonts.googleapis.com/css?family=Roboto:400,400italic,500,300italic,300,500italic,700,700italic' rel='stylesheet' type='text/css'>
+                  <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400italic,700italic,400,700' rel='stylesheet' type='text/css'>
                 </head>
                 <body>
                   <div id="react-root">${reactString}</div>
