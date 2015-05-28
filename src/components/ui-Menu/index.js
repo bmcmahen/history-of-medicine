@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react'
 import Menu from './menu.js'
+import {Link} from 'react-router'
 
 class MenuController extends Component {
 
@@ -19,7 +20,21 @@ class MenuController extends Component {
         onRequestClose={this.close.bind(this)}
         title={this.props.title}
         onRequestOpen={this.open.bind(this)}>
-        <button onClick={this.close.bind(this)}>Click me</button>
+        <div>
+          <h1 className='Menu__brand'>
+            History of Medicine
+          </h1>
+          <ul>
+            <li>
+              <Link to='timeline' onClick={this.close.bind(this)}>
+                Timeline
+              </Link>
+            </li>
+            <li>
+
+            </li>
+          </ul>
+        </div>
       </Menu>
     )
   }

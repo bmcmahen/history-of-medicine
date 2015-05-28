@@ -13,7 +13,7 @@ const log = debug('app:components:require-auth');
 const requireAuth = (Component) => {
   return class Authenticated extends React.Component {
 
-    static willTransitionTo(transition) {
+    static willTransitionTo (transition) {
       let store = transition.context.getStore('users');
       if (!store.state.loggedIn) {
         log('user not logged in, redirecting to login page');
@@ -21,7 +21,7 @@ const requireAuth = (Component) => {
       }
     }
 
-    render() {
+    render () {
       return <Component {...this.props} />;
     }
 

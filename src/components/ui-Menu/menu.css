@@ -33,6 +33,13 @@
   opacity: 1;
   margin: 0;
   transition-duration: 0.6s;
+  padding-left: 10px;
+  font-size: 30px;
+  line-height: 30px;
+  margin-top: -3px;
+  letter-spacing: -1px;
+  font-weight: 300;
+  white-space: nowrap;
   transition-property: opacity;
   transition-timing-function: cubic-bezier(0.6,0,0.2,1);
 }
@@ -42,8 +49,8 @@
 }
 
 .Menu__controls > i {
-  width: 50px;
-  height: 40px;
+  width: 45px;
+  height: 33px;
   cursor: pointer;
   transition-duration: 0.6s;
   transition-property: transform;
@@ -56,8 +63,8 @@
 
 .Menu__controls > i > span {
   display: block;
-  width: 50px;
-  height: 40px;
+  width: 45px;
+  height: 33px;
   transform: translate3d(0px,0px,0px);
   transition-property: transform;
   transition-duration: .4s;
@@ -68,11 +75,11 @@
   background-color: rgba(255,255,255,1);
 }
 .Menu.open .Menu__controls > i > span > p:nth-child(1) {
-  transform: translate3d(0px,9px,0px) rotate(-45deg);
+  transform: translate3d(0px,7px,0px) rotate(-45deg);
 }
 
 .Menu__controls > i > span > p:nth-child(1) {
-  top: 10px;
+  top: 8px;
   transform: translate3d(0px,0px,0px) rotate(0deg);
 }
 
@@ -81,22 +88,22 @@
 }
 
 .Menu__controls > i > span > p:nth-child(2) {
-  top: 19px;
+  top: 15px;
   transform: translate3d(0px,0px,0px) scaleX(1);
 }
 
 .Menu.open .Menu__controls > i > span > p:nth-child(3) {
-  transform: translate3d(0px,-9px,0px) rotate(45deg);
+  transform: translate3d(0px,-7px,0px) rotate(45deg);
 }
 
 .Menu__controls > i > span > p:nth-child(3) {
-  top: 28px;
+  top: 23px;
   transform: translate3d(0px,0px,0px) rotate(0deg);
 }
 
 .Menu__controls > i > span >p {
   display: block;
-  width: 30px;
+  width: 25px;
   height: 2px;
   background-color: rgba(0,0,0,0.9);
   margin: 0;
@@ -106,4 +113,5 @@
   transition-property: transform,background-color;
   transition-duration: .6s;
   transition-timing-function: cubic-bezier(0.6,0,0.2,1);
+  padding: 0;
 }

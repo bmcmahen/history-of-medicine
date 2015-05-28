@@ -37,6 +37,9 @@ class Main extends Component {
       <FluxComponent flux={this.props.flux} connectToStores={{
         users: store => ({
           user: store.state
+        }),
+        app: store => ({
+          title: store.getTitle()
         })
       }}>
         <RouteHandler />

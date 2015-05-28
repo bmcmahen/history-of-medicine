@@ -10,9 +10,9 @@
   text-align: center;
   padding-top: 200px;
   transition-duration: 0.6s;
+  background-color: #f5f5f5;
   transform: translate3d(0px,0px, 0px);
   transition-property: transform;
-  background: #eee;
   transition-timing-function: cubic-bezier(0.6,0,0.2,1);
 }
 
@@ -31,10 +31,22 @@
   right: 0;
   transition-duration: 0.6s;
   top: 0;
+  overflow-y: auto;
+  /*background: #f5f5f5;*/
   transition-property: transform;
   transition-timing-function: cubic-bezier(0.6,0,0.2,1);
 }
 
+.Container__detail-article {
+  padding: 40px 70px;
+}
+
 .Container__detail.open {
   transform: translate3d(0,0,0);
+}
+
+.Container__detail > .CloseButton {
+  position: absolute;
+  top: 15px;
+  right: 15px;
 }

@@ -2,6 +2,8 @@
 
 import React, {Component, PropTypes} from 'react'
 import classNames from 'classnames'
+import CloseButton from '../ui-Close'
+import {RouteHandler} from 'react-router'
 
 if (__CLIENT__) {
   require('./index.css')
@@ -11,7 +13,12 @@ class Container extends Component {
 
   displayName = 'Container'
 
-  static proptTypes = {
+  static propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onRequestOpen: PropTypes.func.isRequired,
+    main: PropTypes.node.isRequired,
+    detail: PropTypes.node.isRequired,
+    onRequestClose: PropTypes.func.isRequired
   }
 
   constructor(props){
@@ -48,27 +55,22 @@ class Container extends Component {
 
     const main = classNames({
       'Container__main': true,
-      'open': this.state.isOpen
+      'open': this.props.isOpen
     })
 
     const detail = classNames({
       'Container__detail': true,
-      'open': this.state.isOpen
+      'open': this.props.isOpen
     })
 
     return (
       <div className={classes}>
         <section className={main}>
-          <h1>Main</h1>
-          <button onClick={this.showDetail.bind(this)}>
-            show detail
-          </button>
+          {this.props.main}
         </section>
         <section ref='detail' className={detail}>
-          <h1>Detail</h1>
-          <button onClick={this.hideDetail.bind(this)}>
-            hide detail
-          </button>
+          <CloseButton onClick={this.hideDetail.bind(this)} />
+          {this.props.detail}
         </section>
       </div>
     )
@@ -76,11 +78,11 @@ class Container extends Component {
 
   showDetail(e){
     e.stopPropagation()
-    this.setState({ isOpen: true })
+    this.props.onRequestOpen()
   }
 
   hideDetail(){
-    this.setState({ isOpen: false })
+    this.props.onRequestClose()
   }
 }
 
