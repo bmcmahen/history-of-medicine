@@ -3,7 +3,8 @@
   height: 100%;
   position: fixed;
   z-index: 90;
-  background-color: #000;
+  background-color: #ed6498;
+  color: white;
   left: 0;
   top: 0;
   transition-timing-function: cubic-bezier(0.6,0,0.2,1);
@@ -37,6 +38,10 @@
   white-space: nowrap;
   transition-property: opacity;
   transition-timing-function: cubic-bezier(0.6,0,0.2,1);
+  color: rgb(65, 175, 165);
+  font-family: 'aktiv-grotesk-std', helvetica, sans-serif;
+  font-size: 19px;
+  line-height: 35px;
 }
 
 .Menu.open .Menu__controls > h2 {
@@ -70,11 +75,11 @@
   background-color: rgba(255,255,255,1);
 }
 .Menu.open .Menu__controls > i > span > p:nth-child(1) {
-  transform: translate3d(0px,7px,0px) rotate(-45deg);
+  transform: translate3d(0px,8px,0px) rotate(-45deg);
 }
 
 .Menu__controls > i > span > p:nth-child(1) {
-  top: 8px;
+  top: 9px;
   transform: translate3d(0px,0px,0px) rotate(0deg);
 }
 
@@ -83,16 +88,16 @@
 }
 
 .Menu__controls > i > span > p:nth-child(2) {
-  top: 15px;
+  top: 16.5px;
   transform: translate3d(0px,0px,0px) scaleX(1);
 }
 
 .Menu.open .Menu__controls > i > span > p:nth-child(3) {
-  transform: translate3d(0px,-7px,0px) rotate(45deg);
+  transform: translate3d(0px,-6.5px,0px) rotate(45deg);
 }
 
 .Menu__controls > i > span > p:nth-child(3) {
-  top: 23px;
+  top: 24px;
   transform: translate3d(0px,0px,0px) rotate(0deg);
 }
 
@@ -100,7 +105,7 @@
   display: block;
   width: 25px;
   height: 2px;
-  background-color: rgba(0,0,0,0.9);
+  background-color: rgb(65, 175, 165);
   margin: 0;
   position: absolute;
   z-index: 95;
@@ -109,4 +114,38 @@
   transition-duration: .6s;
   transition-timing-function: cubic-bezier(0.6,0,0.2,1);
   padding: 0;
+}
+
+.Menu__brand {
+  margin-top: 105px;
+  font-size: 28px;
+  font-weight: 300;
+  padding: 0 15px;
+  margin-bottom: 0;
+}
+
+.Menu__brand:after {
+  content: '-';
+  display: block;
+}
+
+.Menu__links {
+  padding: 0 15px;
+  list-style-type: none;
+}
+
+.Menu__links > li {
+  border-top: 1px solid;
+}
+
+.Menu__links > li > a {
+  color: white;
+  font-size: 16px;
+  display: block;
+  padding: 2px 0;
+  text-decoration: none;
+}
+
+.Menu__links > li > a:hover {
+  background-color: rgba(255,255,255,0.1);
 }

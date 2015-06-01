@@ -4,6 +4,9 @@ import React, {Component, PropTypes} from 'react'
 import classNames from 'classnames'
 import CloseButton from '../ui-Close'
 import {RouteHandler} from 'react-router'
+import debug from 'debug'
+
+const log = debug('app:ui-container')
 
 if (__CLIENT__) {
   require('./index.css')
@@ -28,7 +31,6 @@ class Container extends Component {
   }
 
   componentDidMount(){
-    window.addEventListener('click', this.onWindowClick)
   }
 
   componentWillUnmount(){
@@ -42,16 +44,31 @@ class Container extends Component {
       e.stopPropagation()
       let el = React.findDOMNode(this.refs.detail)
       if (!el.contains(e.target)) {
-        this.setState({ isOpen: false })
+        log('close sidebar')
+        this.props.onRequestClose()
+      } else {
+        log('click is within sidebar, leave open')
       }
     }
   }
 
   componentWillReceiveProps(nextProps){
     if (nextProps.isOpen && !this.props.isOpen) {
+
+      // bind window click when openining
+      setTimeout(() => {
+        window.addEventListener('click', this.onWindowClick)
+      }, 0)
+
+      log('scroll view to the top')
       let el = React.findDOMNode(this.refs.scroll)
       el.scrollTop = 0
     }
+
+    if (!nextProps.isOpen) {
+      window.removeEventListener('click', this.onWindowClick)
+    }
+
   }
 
   render(){

@@ -24,7 +24,7 @@ class MenuController extends Component {
           <h1 className='Menu__brand'>
             History of Medicine
           </h1>
-          <ul>
+          <ul className='Menu__links'>
             <li>
               <Link to='timeline' onClick={this.close.bind(this)}>
                 Timeline
