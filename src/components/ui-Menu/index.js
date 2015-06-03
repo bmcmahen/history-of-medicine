@@ -31,7 +31,9 @@ class MenuController extends Component {
               </Link>
             </li>
             <li>
-
+              <Link to='map' onClick={this.close.bind(this)}>
+                Map
+              </Link>
             </li>
           </ul>
         </div>
