@@ -151,7 +151,7 @@ const Map = React.createClass({
             <p>Mollit excepteur consectetur exercitation qui sint elit sint est amet ullamco.</p>
             <p>Duis et officia sit laborum exercitation. Amet dolor ea cillum eu non nostrud aliqua ex. Pariatur irure minim cupidatat duis cillum reprehenderit duis dolore dolor. Id deserunt sit eu enim anim aute. Reprehenderit nostrud proident consectetur veniam tempor. Tempor ea occaecat nulla anim exercitation amet occaecat laboris non enim.</p>
             <ul className='Map__poi-list'>
-              <li onClick={this.showDetail.bind(this, 'stage1-0')}>
+              <li className={this.isChildActive('stage1-0')} onClick={this.showDetail.bind(this, 'stage1-0')}>
                 <div>
                   <img src='https://static.pexels.com/photos/4403/black-and-white-building-roof-architecture-large.jpg' />
                 </div>
@@ -159,7 +159,7 @@ const Map = React.createClass({
                   <h4>Something Building</h4>
                 </div>
               </li>
-              <li onClick={this.showDetail.bind(this, 'stage1-1')}>
+              <li className={this.isChildActive('stage1-1')} onClick={this.showDetail.bind(this, 'stage1-1')}>
                 <div>
                   <img src='https://static.pexels.com/photos/378/black-and-white-city-building-house.jpg'/>
                 </div>
@@ -167,7 +167,7 @@ const Map = React.createClass({
                   <h4>Somethinb Building 2</h4>
                 </div>
               </li>
-              <li onClick={this.showDetail.bind(this, 'stage1-2')}>
+              <li className={this.isChildActive('stage1-2')} onClick={this.showDetail.bind(this, 'stage1-2')}>
                 <div>
                   <img src='https://static.pexels.com/photos/814/building-house-high-rise-hdr-large.jpg' />
                 </div>
@@ -206,6 +206,12 @@ const Map = React.createClass({
         </div>
       </div>
     )
+  },
+
+  isChildActive (stage) {
+    return stage === this.state.detailedStage
+      ? 'Map--active-child'
+      : null
   },
 
   showDetail (name) {
