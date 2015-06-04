@@ -7,7 +7,7 @@ import Detail from '../ui-Detail'
 import stages from './stages'
 import debug from 'debug'
 import Waypoint from 'react-waypoint'
-import detailedStages from './detail-stages'
+import _ from 'lodash'
 
 const log = debug('app:ui-Map')
 
@@ -32,21 +32,33 @@ const Map = React.createClass({
   componentWillUpdate (nextProps, nextState) {
     if (!this.map) return
 
-    // transition main stage
+    // transition the main stage
     if (nextState.stage !== this.state.stage) {
+      this.toggleMapClasses(nextState.stage)
       this.transitionTo(nextState.stage)
+
+      // transition from a detailed stage, to a non-detailed
+      // stage; i.e., remove the detailed stage className
+      if (nextState.detailedStage != null) {
+        this.map.removeClass(nextState.detailedStage)
+      }
+
     }
 
-    // transition detailed stage
-    if (nextState.detailedStage !== this.state.detaileStage) {
-      this.transitionDetail(nextState.detailedStage)
+    // transition detail stage if we have a detailed stage,
+    // and if that detailed stage doesn't equal the previous one
+    if (nextState.detailedStage
+      && (nextState.detailedStage !== this.state.detailedStage)) {
+      this.transitionTo(nextState.detailedStage)
+      this.toggleDetailClasses(nextState.detailedStage)
     }
 
   },
 
   getInitialState () {
     return {
-      stage: 0
+      stage: 'stage0',  // key of the first stage to show
+      detailedStage: null
     }
   },
 
@@ -64,44 +76,42 @@ const Map = React.createClass({
 
   componentDidMount () {
     let el = React.findDOMNode(this.refs.map)
-    let tileset = 'bmcmahen.5d692063'
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiYm1jbWFoZW4iLCJhIjoiMmI0ZDVmZDI3YjFlM2ZiYTVmZDQ2MjBhMGQxNTMyNzgifQ.l_MuF4H2l44qpbN8NP9WEw'
+
+    let initialStage = this.getStage(this.state.stage)
 
     this.map = new mapboxgl.Map({
       container: el,
       interactive: false,
       style: require('./map-style.json'),
-      center: stages[0].target,
-      zoom: stages[0].zoom
-   })
+      center: initialStage.target,
+      zoom: initialStage.zoom
+    })
 
-   this.map.addClass('stage0')
+    this.map.addClass('stage0')
 
-   this.map.on('style.load', () => {
+    this.map.on('style.load', () => {
 
-     // add our various stages
-     for (let stage of stages) {
-      if (stage.source && stage.layer) {
+      _.each(stages, stage => {
         this.map.addSource(stage.name, stage.source)
         this.map.addLayer(stage.layer)
-      }
-    }
-  })
+      })
 
+    })
 
-  // resize our map when the window is resized
-  window.addEventListener('resize', this.onResize)
+    // resize our map when the window is resized
+    window.addEventListener('resize', this.onResize)
 
-  },
-
-  onResize () {
-    this.map.resize()
   },
 
   componentWillUnmount () {
     this.map.remove()
     window.removeEventListener('resize', this.onResize)
+  },
+
+  onResize () {
+    this.map.resize()
   },
 
   renderMap () {
@@ -111,7 +121,7 @@ const Map = React.createClass({
         <div className='Map__container' ref='map' />
         <div className='Map__detail'>
           <Waypoint
-            onEnter={this.onEnter.bind(this, 0)}
+            onEnter={this.onEnter.bind(this, 'stage0')}
           />
           <img className='Map__header' src='https://static.pexels.com/photos/6561/city-cars-people-street-large.jpeg'/>
           <div className='Map__section'>
@@ -136,12 +146,12 @@ const Map = React.createClass({
           <div className='Map__section' style={{backgroundColor: '#3bb2d0'}}>
             <h2>A List of Buildings</h2>
             <Waypoint
-              onEnter={this.onEnter.bind(this, 1)}
+              onEnter={this.onEnter.bind(this, 'stage1')}
             />
             <p>Mollit excepteur consectetur exercitation qui sint elit sint est amet ullamco.</p>
             <p>Duis et officia sit laborum exercitation. Amet dolor ea cillum eu non nostrud aliqua ex. Pariatur irure minim cupidatat duis cillum reprehenderit duis dolore dolor. Id deserunt sit eu enim anim aute. Reprehenderit nostrud proident consectetur veniam tempor. Tempor ea occaecat nulla anim exercitation amet occaecat laboris non enim.</p>
             <ul className='Map__poi-list'>
-              <li onClick={this.showDetail.bind(this, 0)}>
+              <li onClick={this.showDetail.bind(this, 'stage1-0')}>
                 <div>
                   <img src='https://static.pexels.com/photos/4403/black-and-white-building-roof-architecture-large.jpg' />
                 </div>
@@ -149,7 +159,7 @@ const Map = React.createClass({
                   <h4>Something Building</h4>
                 </div>
               </li>
-              <li onClick={this.showDetail.bind(this, 1)}>
+              <li onClick={this.showDetail.bind(this, 'stage1-1')}>
                 <div>
                   <img src='https://static.pexels.com/photos/378/black-and-white-city-building-house.jpg'/>
                 </div>
@@ -157,7 +167,7 @@ const Map = React.createClass({
                   <h4>Somethinb Building 2</h4>
                 </div>
               </li>
-              <li onClick={this.showDetail.bind(this, 2)}>
+              <li onClick={this.showDetail.bind(this, 'stage1-2')}>
                 <div>
                   <img src='https://static.pexels.com/photos/814/building-house-high-rise-hdr-large.jpg' />
                 </div>
@@ -173,7 +183,7 @@ const Map = React.createClass({
           <div className='Map__section' style={{backgroundColor: '#ed6498'}}>
             <h2>Point of Interest 2</h2>
             <Waypoint
-              onEnter={this.onEnter.bind(this, 2)}
+              onEnter={this.onEnter.bind(this, 'stage2')}
             />
             <p>Mollit excepteur consectetur exercitation qui sint elit sint est amet ullamco.</p>
             <p>Duis et officia sit laborum exercitation. Amet dolor ea cillum eu non nostrud aliqua ex. Pariatur irure minim cupidatat duis cillum reprehenderit duis dolore dolor. Id deserunt sit eu enim anim aute. Reprehenderit nostrud proident consectetur veniam tempor. Tempor ea occaecat nulla anim exercitation amet occaecat laboris non enim.</p>
@@ -185,7 +195,7 @@ const Map = React.createClass({
           <div className='Map__section'>
             <h2>Another Subheading</h2>
             <Waypoint
-              onEnter={this.onEnter.bind(this, 3)}
+              onEnter={this.onEnter.bind(this, 'stage3')}
             />
             <p>Duis et officia sit laborum exercitation. Amet dolor ea cillum eu non nostrud aliqua ex. Pariatur irure minim cupidatat duis cillum reprehenderit duis dolore dolor. Id deserunt sit eu enim anim aute. Reprehenderit nostrud proident consectetur veniam tempor. Tempor ea occaecat nulla anim exercitation amet occaecat laboris non enim.</p>
             <p>Eiusmod ea ex et elit labore excepteur non. Laborum exercitation pariatur sunt excepteur ullamco voluptate incididunt laborum. Commodo aute dolor elit incididunt voluptate labore exercitation Lorem incididunt. Lorem Lorem laborum ullamco adipisicing ipsum aliquip mollit adipisicing voluptate dolor do do officia. Non ullamco Lorem velit est nisi sunt exercitation culpa. Dolore aute fugiat voluptate consectetur enim consequat sunt sunt dolor nisi ullamco velit pariatur excepteur. Cupidatat et exercitation sint duis voluptate laborum aliquip enim tempor.</p>
@@ -198,63 +208,67 @@ const Map = React.createClass({
     )
   },
 
-  showDetail (index) {
-    this.setState({ detailedStage: index })
+  showDetail (name) {
+    let mainStage = name.split('-')[0]
+    let newState = {}
+    if (this.state.stage !== mainStage) {
+      newState.stage = mainStage
+    }
+
+    newState.detailedStage = name
+    this.setState(newState)
   },
 
+  // when entering a waypoint, update our state with the appropriate
+  // stage name and remove our detailed stage
   onEnter (index) {
     log('on enter waypoint %s', index)
-    this.setState({ stage: index })
+    this.setState({ stage: index, detailedStage: null })
   },
 
   renderDetail () {
     return null
   },
 
-  showNext () {
-    let stage = (this.state.stage >= (stages.length - 1))
-      ? 0
-      : this.state.stage + 1
-
-    log('show next %s', stage)
-
-    this.setState({ stage: stage })
-  },
-
   getStage (i) {
-    return stages[i]
+    let parts = i.split('-')
+
+    // return main stage if 'stage1'
+    if (parts.length === 1) {
+      return stages[i]
+    }
+
+    // return the child if 'stage1-1'
+    return stages[parts[0]].children[i]
   },
 
+  toggleDetailClasses (nextDetailName) {
 
+    if (this.state.detailedStage != null) {
+      let oldStage = this.state.detailedStage
+      if (this.map.hasClass(oldStage)) {
+        this.map.removeClass(oldStage)
+      }
 
-  toggleMapClasses (nextStageIndex) {
+      this.map.addClass(nextDetailName)
+    }
+  },
+
+  toggleMapClasses (nextStageName) {
 
     // update our map stage class to deal with transitions
-    if (typeof this.state.stage !== 'undefined') {
-      let oldStage = 'stage' + this.state.stage
+    if (this.state.stage != null) {
+      let oldStage = this.state.stage
       if (this.map.hasClass(oldStage)) {
         log('remove class %s', oldStage)
         this.map.removeClass(oldStage)
       }
 
-      log('add class %s', 'stage' + nextStageIndex)
-      this.map.addClass('stage' + nextStageIndex)
+      log('add class %s', nextStageName)
+      this.map.addClass(nextStageName)
     }
   },
 
-  transitionDetail (i) {
-    if (!this.map) return
-    let stage = this.getStage(this.state.stage)
-    let detailed = detailedStages[stage.name][i]
-    let {target, zoom} = detailed
-
-    log('show detailed stage %o', detailed)
-
-    this.map.flyTo(target, zoom, 0, {
-      speed: 0.8
-    })
-
-  },
 
   // only use this to transition the stage -- not for detailed
   // transitions. This should also check if we have a detailed
@@ -265,13 +279,6 @@ const Map = React.createClass({
     let {target, zoom, transition} = stage
 
     log('transition to stage %o', stage)
-
-    if (this.state.detailedStage != null) {
-      this.setState({ detailedStage: null })
-    }
-
-    // ensure we toggle our map classes
-    this.toggleMapClasses(i)
 
     // actually make the animated transition
     if (transition) {

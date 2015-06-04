@@ -6,11 +6,9 @@ let symbolLayout = {
   'text-anchor': 'top'
 }
 
-export default [
+export default {
 
-  // stage 0
-
-  {
+  stage0: {
     name: 'stage0',
     target: [43.2543, -79.8472],
     zoom: 16,
@@ -57,12 +55,27 @@ export default [
     }
   },
 
-  // stage 1
-
-  {
+  stage1: {
     name: 'stage1',
     target: [43.2543, -79.8472],
     zoom: 11,
+    children: {
+      'stage1-0': {
+        name: 'stage1-0',
+        target: [43.2543, -79.84],
+        zoom: 16
+      },
+      'stage1-1': {
+        name: 'stage1-1',
+        target: [43.28, -79.8],
+        zoom: 16
+      },
+      'stage1-2': {
+        name: 'stage1-2',
+        target: [43.24, -79.83],
+        zoom: 16
+      }
+    },
     source: {
       type: 'geojson',
       data: {
@@ -117,9 +130,7 @@ export default [
     }
   },
 
-
-  // stage2
-  {
+  stage2: {
     name: 'stage2',
     target: [43.1543, -79.8272],
     zoom: 13,
@@ -131,9 +142,7 @@ export default [
     }
   },
 
-  // stage 3
-
-  {
+  stage3: {
     name: 'stage3',
     target: [44, -79],
     zoom: 13,
@@ -145,4 +154,4 @@ export default [
     }
   }
 
-]
+}
